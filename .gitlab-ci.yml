@@ -1,0 +1,66 @@
+.default:
+  before_script:
+    - apk update && apk add git openssh-client --upgrade
+    - eval $(ssh-agent -s)
+    - echo "$CI_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # Create .ssh folder
+    - install -d -m 700 ~/.ssh
+    # Add gitlab's fingerprint to our known_hosts so git doesn't complain
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+    - git config --global user.email "ci@nexiona.com"
+    - git config --global user.name "GitLab CI/CD"
+
+stages:
+  - build
+  - release
+
+# fmt:
+#   stage: lint
+#   image: python:3.11-alpine
+#   needs: []
+#   when: always
+#   script:
+#     - pip install black
+#     - python -m black -t py311 --check .
+
+build-docker:
+  extends: .default
+  stage: build
+  # needs:
+  #   - fmt
+  before_script:
+    - docker login -u $QA_REGISTRY_USER -p $QA_REGISTRY_PASSWORD $QA_REGISTRY
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        export CI_TAG=$CI_COMMIT_TAG
+      else
+        export CI_TAG=$CI_COMMIT_REF_SLUG
+      fi
+    - echo "Using image tag \"$CI_TAG\""
+  script:
+    - docker compose build
+    - docker tag registry.nexiona.io/internal/portainer-cli:latest registry.nexiona.io/internal/portainer-cli:$CI_TAG
+    - docker push registry.nexiona.io/internal/portainer-cli:$CI_TAG
+    - |
+      echo uploaded image: registry.nexiona.io/internal/portainer-cli:$CI_TAG
+    - |
+      if [ "$CI_TAG" == "master" ]; then
+        docker compose push;
+        echo uploaded image: registry.nexiona.io/internal/portainer-cli:latest
+      fi
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  before_script:
+    - apk update && apk add openssh-client git bash grep
+    - eval $(ssh-agent -s)
+    - echo "$CI_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - install -d -m 700 ~/.ssh
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+    - git config --global user.email "ci@nexiona.com"
+    - git config --global user.name "GitLab CI/CD"
+  script:
+    - release-cli create --tag-name $CI_COMMIT_TAG --description "New release"
+  only:
+    - tags

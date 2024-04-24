@@ -1,0 +1,20 @@
+[project]
+name = "portainer"
+version = "1.0.0"
+description = "Portainer Stack for deploying miimetiq"
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.1",
+    "structlog==23.1.0",
+    "requests==2.31.0",
+]
+
+[project.scripts]
+portainer = "portainer.cli:cli"
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "portainer"

@@ -1,0 +1,4 @@
+services:
+  portainer_cli:
+    image: registry.nexiona.io/internal/portainer-cli:latest
+    build: .

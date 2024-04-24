@@ -44,7 +44,7 @@ build-docker:
     - |
       echo uploaded image: registry.nexiona.io/internal/portainer-cli:$CI_TAG
     - |
-      if [ "$CI_TAG" == "master" ]; then
+      if [ "$CI_TAG" == "main" ]; then
         docker compose push;
         echo uploaded image: registry.nexiona.io/internal/portainer-cli:latest
       fi

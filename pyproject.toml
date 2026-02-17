@@ -1,12 +1,12 @@
 [project]
 name = "portainer"
-version = "1.0.0"
+version = "1.1.0"
 description = "Portainer Stack for deploying miimetiq"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
-    "click>=8.1",
-    "structlog==23.1.0",
-    "requests==2.31.0",
+    "click>=8.3",
+    "structlog>=25.5.0",
+    "requests>=2.32.5",
 ]
 
 [project.scripts]
@@ -18,3 +18,10 @@ build-backend = "flit_core.buildapi"
 
 [tool.flit.module]
 name = "portainer"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.1.0"
+version_files = ["pyproject.toml:^version"]
+tag_format = "v$version"
+update_changelog_on_bump = false

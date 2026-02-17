@@ -2,18 +2,35 @@ import sys
 import requests
 
 class PortainerAPI(object):
-    def __init__(self, ctx, url, username, password):
+    def __init__(self, ctx, url, username=None, password=None, token=None):
+        """Initialize Portainer API client.
+
+        Supports two authentication methods:
+        1. Username/Password: Uses /auth endpoint to get JWT token
+        2. API Token: Uses X-API-Key header (recommended for automation)
+
+        :param ctx: Context object with logger
+        :param url: Portainer API URL (e.g., https://example.tld/api)
+        :param username: Portainer username (for username/password auth)
+        :param password: Portainer password (for username/password auth)
+        :param token: Portainer API access token (alternative to username/password)
+        """
         self.ctx = ctx
         self.url = url
         self.username = username
         self.password = password
-        self.token = None
+        self.api_token = token  # API access token (X-API-Key)
+        self.jwt_token = None   # JWT token from /auth
         self.timeout = 300
 
-        self.login()
+        if not self.api_token:
+            self.login()
 
     def _authz(self):
-        return {"Authorization": f"Bearer {self.token}"}
+        """Return authorization headers based on authentication method."""
+        if self.api_token:
+            return {"X-API-Key": self.api_token}
+        return {"Authorization": f"Bearer {self.jwt_token}"}
 
     def _get(self, url, **headers):
         r = requests.get(
@@ -61,15 +78,19 @@ class PortainerAPI(object):
         return r
 
     def login(self):
+        """Authenticate using username/password to obtain JWT token."""
         self.ctx.logger.debug(f"Logging in to {self.url} as {self.username}...")
-        response = self._post(
+        response = requests.post(
             f"{self.url}/auth",
-            {},
-            {"Username": self.username, "Password": self.password}
+            json={"Username": self.username, "Password": self.password},
+            timeout=self.timeout,
         )
+        if response.status_code != 200:
+            self.ctx.logger.error(f"Login failed: {response.status_code} {response.text}")
+            sys.exit(1)
 
-        self.ctx.logger.debug(f"Login successful: {response.status_code} {response.text}")
-        self.token = response.json()["jwt"]
+        self.ctx.logger.debug(f"Login successful: {response.status_code}")
+        self.jwt_token = response.json()["jwt"]
 
     def stack_status(self, stack_id):
         self.ctx.logger.debug(f"Getting stack status stack_id: {stack_id}")

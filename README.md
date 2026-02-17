@@ -63,24 +63,28 @@ uv run portainer --help
 
 ## Quick Usage (without cloning)
 
+### Using uvx (recommended)
+
+```bash
+# Run directly without installation
+uvx --from git+https://github.com/oriolrius/portainer-cli portainer --help
+
+# Run specific version
+uvx --from git+https://github.com/oriolrius/portainer-cli@v2.0.1 portainer --help
+
+# Example: list endpoints
+uvx --from git+https://github.com/oriolrius/portainer-cli portainer \
+  -U https://portainer.example.com/api -t YOUR_API_TOKEN endpoints-list
+```
+
 ### Using pip
 
 ```bash
 # Install directly from GitHub
-pip install git+https://github.com/oriolrius/portainer-cli.git@v2.0.0
+pip install git+https://github.com/oriolrius/portainer-cli.git
 
 # Then run
 portainer --help
-```
-
-### Using pipx (isolated environment)
-
-```bash
-# Install in isolated environment
-pipx install git+https://github.com/oriolrius/portainer-cli.git@v2.0.0
-
-# Then run
-portainer -U https://portainer.example.com/api -t YOUR_API_TOKEN endpoints-list
 ```
 
 ## Docker Usage

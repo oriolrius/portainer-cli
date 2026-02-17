@@ -70,7 +70,7 @@ uv run portainer --help
 uvx --from git+https://github.com/oriolrius/portainer-cli portainer --help
 
 # Run specific version
-uvx --from git+https://github.com/oriolrius/portainer-cli@v2.0.1 portainer --help
+uvx --from git+https://github.com/oriolrius/portainer-cli@v2.1.0 portainer --help
 
 # Example: list endpoints
 uvx --from git+https://github.com/oriolrius/portainer-cli portainer \

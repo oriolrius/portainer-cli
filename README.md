@@ -52,7 +52,8 @@ uv run portainer --help
 - `endpoints-list` - List available endpoints
 - `stack-list` - List stacks
 - `stack-status` - Get stack status
-- `stack-create` - Create a new stack
+- `stack-create` - Create a new stack from local files
+- `stack-create-git` - Create a new stack from Git repository
 - `stack-start` - Start a stack
 - `stack-stop` - Stop a stack
 - `stack-delete` - Delete a stack
@@ -60,6 +61,26 @@ uv run portainer --help
 - `volume-create` - Create a volume
 - `volume-delete` - Delete a volume
 - `volume-prune` - Delete volumes (with dry-mode)
+
+### Create Stack from Git Repository
+
+```bash
+# Public repository
+uv run portainer stack-create-git -n mystack -e 1 \
+  -r https://github.com/user/repo
+
+# Private repository with authentication
+uv run portainer stack-create-git -n mystack -e 1 \
+  -r https://github.com/user/repo \
+  --git-username user --git-token ghp_xxxx
+
+# With environment variables and auto-update
+uv run portainer stack-create-git -n mystack -e 1 \
+  -r https://github.com/user/repo \
+  --env "DB_HOST=localhost" --env "DB_PORT=5432" \
+  --env-file .env \
+  --auto-update --auto-update-interval 10m
+```
 
 ## Quick Usage (without cloning)
 

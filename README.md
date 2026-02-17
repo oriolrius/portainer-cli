@@ -82,6 +82,30 @@ uv run portainer stack-create-git -n mystack -e 1 \
   --auto-update --auto-update-interval 10m
 ```
 
+### GitLab Private Repository Setup
+
+To deploy from a private GitLab repository, create a deploy token:
+
+```bash
+# Using glab CLI (run from inside the repo)
+cd /path/to/your/repo
+glab api "projects/:fullpath/deploy_tokens" -X POST \
+  -f name="portainer-deploy" \
+  -f scopes="read_repository" \
+  -f expires_at="2027-12-31"
+```
+
+The output includes `username` (e.g., `gitlab+deploy-token-XXXXX`) and `token` fields.
+
+Then deploy the stack:
+
+```bash
+uv run portainer stack-create-git -n mystack -e 1 \
+  -r https://gitlab.com/your-group/your-repo.git \
+  --git-username "gitlab+deploy-token-XXXXX" \
+  --git-token "gldt-xxxxxxxxxxxx"
+```
+
 ## Quick Usage (without cloning)
 
 ### Using uvx (recommended)
@@ -91,7 +115,7 @@ uv run portainer stack-create-git -n mystack -e 1 \
 uvx --from git+https://github.com/oriolrius/portainer-cli portainer --help
 
 # Run specific version
-uvx --from git+https://github.com/oriolrius/portainer-cli@v2.1.0 portainer --help
+uvx --from git+https://github.com/oriolrius/portainer-cli@v2.3.0 portainer --help
 
 # Example: list endpoints
 uvx --from git+https://github.com/oriolrius/portainer-cli portainer \

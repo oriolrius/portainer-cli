@@ -61,20 +61,26 @@ uv run portainer --help
 - `volume-delete` - Delete a volume
 - `volume-prune` - Delete volumes (with dry-mode)
 
-## Quick Usage with uvx
+## Quick Usage (without cloning)
 
-Run directly without installation using `uvx`:
+### Using pip with SSH (private repo)
 
 ```bash
-# From GitLab (latest)
-uvx --from git+https://gitlab.com/nexiona/infrastructre/portainer-cli portainer --help
+# Install directly from GitLab
+pip install git+ssh://git@gitlab.com/nexiona/infrastructre/portainer-cli.git@v2.0.0
 
-# From specific tag
-uvx --from git+https://gitlab.com/nexiona/infrastructre/portainer-cli@v2.0.0 portainer --help
+# Then run
+portainer --help
+```
 
-# Example: list endpoints
-uvx --from git+https://gitlab.com/nexiona/infrastructre/portainer-cli portainer \
-  -U https://portainer.example.io/api -t YOUR_API_TOKEN endpoints-list
+### Using pipx (isolated environment)
+
+```bash
+# Install in isolated environment
+pipx install git+ssh://git@gitlab.com/nexiona/infrastructre/portainer-cli.git@v2.0.0
+
+# Then run
+portainer -U https://portainer.example.io/api -t YOUR_API_TOKEN endpoints-list
 ```
 
 ## Docker Usage

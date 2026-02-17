@@ -63,11 +63,11 @@ uv run portainer --help
 
 ## Quick Usage (without cloning)
 
-### Using pip with SSH
+### Using pip
 
 ```bash
-# Install directly from repository
-pip install git+ssh://git@github.com/YOUR-ORG/portainer-cli.git@v2.0.0
+# Install directly from GitHub
+pip install git+https://github.com/oriolrius/portainer-cli.git@v2.0.0
 
 # Then run
 portainer --help
@@ -77,7 +77,7 @@ portainer --help
 
 ```bash
 # Install in isolated environment
-pipx install git+ssh://git@github.com/YOUR-ORG/portainer-cli.git@v2.0.0
+pipx install git+https://github.com/oriolrius/portainer-cli.git@v2.0.0
 
 # Then run
 portainer -U https://portainer.example.com/api -t YOUR_API_TOKEN endpoints-list
@@ -86,7 +86,13 @@ portainer -U https://portainer.example.com/api -t YOUR_API_TOKEN endpoints-list
 ## Docker Usage
 
 ```bash
-docker run --rm --network host your-registry/portainer-cli --help
+docker run --rm --network host ghcr.io/oriolrius/portainer-cli --help
+
+# With environment variables
+docker run --rm --network host \
+  -e PORTAINER_API_URL=https://portainer.example.com/api \
+  -e PORTAINER_API_TOKEN=YOUR_TOKEN \
+  ghcr.io/oriolrius/portainer-cli stack-list
 ```
 
 ## Development

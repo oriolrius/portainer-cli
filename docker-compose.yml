@@ -1,4 +1,4 @@
 services:
   portainer-cli:
-    image: ${DOCKER_REGISTRY:-ghcr.io/your-org}/portainer-cli:${TAG:-latest}
+    image: ghcr.io/oriolrius/portainer-cli:${TAG:-latest}
     build: .

@@ -5,7 +5,7 @@ CLI tool for managing Portainer stacks, volumes, and endpoints.
 ## Installation
 
 ```bash
-pip install --editable .
+uv sync
 ```
 
 ## Authentication
@@ -15,14 +15,14 @@ Two authentication methods are supported:
 ### 1. API Token (Recommended)
 
 ```bash
-portainer -U https://portainer.example.io/api -t YOUR_API_TOKEN stack-list
+uv run portainer -U https://portainer.example.io/api -t YOUR_API_TOKEN stack-list
 ```
 
 Or via environment variable:
 ```bash
 export PORTAINER_API_URL=https://portainer.example.io/api
 export PORTAINER_API_TOKEN=YOUR_API_TOKEN
-portainer stack-list
+uv run portainer stack-list
 ```
 
 To create an API token: Portainer UI > My account > Access tokens > Add access token
@@ -30,7 +30,7 @@ To create an API token: Portainer UI > My account > Access tokens > Add access t
 ### 2. Username/Password
 
 ```bash
-portainer -U https://portainer.example.io/api -u admin -p password stack-list
+uv run portainer -U https://portainer.example.io/api -u admin -p password stack-list
 ```
 
 Or via environment variables:
@@ -38,13 +38,13 @@ Or via environment variables:
 export PORTAINER_API_URL=https://portainer.example.io/api
 export PORTAINER_API_USER=admin
 export PORTAINER_API_PASSWORD=password
-portainer stack-list
+uv run portainer stack-list
 ```
 
 ## Usage
 
 ```bash
-portainer --help
+uv run portainer --help
 ```
 
 ### Available Commands
@@ -70,6 +70,6 @@ docker run --rm --network host registry.nexiona.io/internal/portainer-cli --help
 ## Development
 
 ```bash
-pipreqs . --force
-pip install --editable .
+uv sync
+uv run portainer --help
 ```

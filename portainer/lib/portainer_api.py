@@ -157,6 +157,79 @@ class PortainerAPI(object):
 
         return response.json()
 
+    def stack_create_git(
+        self,
+        endpoint_id,
+        stack_name,
+        repo_url,
+        repo_ref="refs/heads/main",
+        compose_path="docker-compose.yml",
+        env_vars=None,
+        repo_username=None,
+        repo_password=None,
+        auto_update=False,
+        auto_update_interval="5m",
+        auto_update_webhook=False,
+        tls_skip_verify=False,
+    ):
+        """Create a stack from a Git repository.
+
+        :param endpoint_id: The ID of the endpoint.
+        :param stack_name: Name for the stack.
+        :param repo_url: Git repository URL (HTTPS).
+        :param repo_ref: Git reference (branch/tag), e.g., 'refs/heads/main'.
+        :param compose_path: Path to docker-compose.yml in the repository.
+        :param env_vars: List of environment variables [{"name": "KEY", "value": "VAL"}].
+        :param repo_username: Git username for authentication (optional).
+        :param repo_password: Git password/token for authentication (optional).
+        :param auto_update: Enable GitOps auto-update via polling.
+        :param auto_update_interval: Polling interval (e.g., '5m', '1h').
+        :param auto_update_webhook: Enable webhook-based updates.
+        :param tls_skip_verify: Skip TLS certificate verification for Git.
+        :return: JSON response containing stack details.
+        """
+        self.ctx.logger.debug(f"Creating stack from Git: {stack_name} - repo: {repo_url}")
+
+        payload = {
+            "Name": stack_name,
+            "RepositoryURL": repo_url,
+            "RepositoryReferenceName": repo_ref,
+            "ComposeFilePathInRepository": compose_path,
+            "Env": env_vars or [],
+            "TLSSkipVerify": tls_skip_verify,
+        }
+
+        # Add authentication if provided
+        if repo_username and repo_password:
+            payload["RepositoryAuthentication"] = True
+            payload["RepositoryUsername"] = repo_username
+            payload["RepositoryPassword"] = repo_password
+        else:
+            payload["RepositoryAuthentication"] = False
+
+        # Add auto-update configuration
+        if auto_update or auto_update_webhook:
+            payload["AutoUpdate"] = {
+                "Interval": auto_update_interval if auto_update else "",
+                "Webhook": "" if not auto_update_webhook else None,
+            }
+            if auto_update:
+                payload["AutoUpdate"]["Interval"] = auto_update_interval
+
+        params = {
+            "endpointId": endpoint_id,
+        }
+
+        self.ctx.logger.debug(f"payload: {payload}")
+        response = self._post(
+            f"{self.url}/stacks/create/standalone/repository",
+            params,
+            payload
+        )
+        self.ctx.logger.debug(f"Stack created: {response.status_code} {response.text}")
+
+        return response.json()
+
     def stack_delete(self, stack_id, endpoint_id):
         self.ctx.logger.debug(f"Deleting stack stack_id: {stack_id} - endpoint_id: {endpoint_id}")
         params = {
